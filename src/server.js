@@ -1,8 +1,10 @@
+const http = require('http');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
 const { pool, testConnection } = require('./config/database');
+const { initSocket } = require('./services/socketService');
 const healthRoutes = require('./routes/healthRoutes');
 const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
@@ -16,7 +18,11 @@ const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
+
+// Initialize Socket.IO with HTTP server
+initSocket(server);
 
 // Enable CORS for React Native & mobile dev environments
 app.use(cors());
@@ -46,7 +52,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Start server
-app.listen(PORT, '0.0.0.0', async () => {
+server.listen(PORT, '0.0.0.0', async () => {
   console.log(`FlatMate Backend API running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health and /api/health`);
   console.log(`DB Health check available at http://localhost:${PORT}/api/health/db`);

@@ -1,5 +1,6 @@
 const { pool } = require('../config/database');
 const { createNotification } = require('../services/notificationService');
+const { notifyNewMessage } = require('../services/socketService');
 
 /**
  * Helper to verify accepted connection status between two users
@@ -98,10 +99,19 @@ const sendMessage = async (req, res) => {
       [messageId]
     );
 
+    const messageRecord = created[0];
+
+    // Real-time broadcast to conversation and recipient rooms
+    try {
+      notifyNewMessage(messageRecord);
+    } catch (socketErr) {
+      console.warn('[Socket.IO] Broadcast failed:', socketErr.message);
+    }
+
     return res.status(201).json({
       success: true,
       message: 'Message sent successfully',
-      data: created[0]
+      data: messageRecord
     });
   } catch (error) {
     console.error('Send Message Error:', error.message);
