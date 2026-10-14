@@ -37,11 +37,24 @@ const register = async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone && typeof phone === 'string' ? phone.trim() : null;
 
-    // Password length validation
-    if (password.length < 6) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters'
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    // Enforce password complexity (at least 8 chars, 1 uppercase, 1 lowercase, 1 number)
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+
+    if (password.length < 8 || !hasUpperCase || !hasLowerCase || !hasNumber) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number'
       });
     }
 
@@ -330,10 +343,14 @@ const changePassword = async (req, res) => {
       });
     }
 
-    if (!new_password || typeof new_password !== 'string' || new_password.length < 6) {
+    const hasUpperCase = /[A-Z]/.test(new_password);
+    const hasLowerCase = /[a-z]/.test(new_password);
+    const hasNumber = /[0-9]/.test(new_password);
+
+    if (!new_password || typeof new_password !== 'string' || new_password.length < 8 || !hasUpperCase || !hasLowerCase || !hasNumber) {
       return res.status(400).json({
         success: false,
-        message: 'New password must be at least 6 characters'
+        message: 'New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number'
       });
     }
 

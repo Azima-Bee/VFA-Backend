@@ -64,14 +64,14 @@ async function runNotificationsTests() {
     const regA = await makeRequest('POST', '/api/auth/register', {
       full_name: 'Notif Student A',
       email: emailA,
-      password: 'password123',
+      password: 'Password@123',
     });
     assert(regA.status === 201 && regA.body.user, 'Register Test User A');
     const userAId = regA.body.user.id;
 
     const loginA = await makeRequest('POST', '/api/auth/login', {
       email: emailA,
-      password: 'password123',
+      password: 'Password@123',
     });
     assert(loginA.status === 200 && loginA.body.token, 'Login Test User A');
     const tokenA = loginA.body.token;
@@ -80,14 +80,14 @@ async function runNotificationsTests() {
     const regB = await makeRequest('POST', '/api/auth/register', {
       full_name: 'Notif Student B',
       email: emailB,
-      password: 'password123',
+      password: 'Password@123',
     });
     assert(regB.status === 201 && regB.body.user, 'Register Test User B');
     const userBId = regB.body.user.id;
 
     const loginB = await makeRequest('POST', '/api/auth/login', {
       email: emailB,
-      password: 'password123',
+      password: 'Password@123',
     });
     assert(loginB.status === 200 && loginB.body.token, 'Login Test User B');
     const tokenB = loginB.body.token;

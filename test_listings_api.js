@@ -64,24 +64,24 @@ async function runTests() {
     await makeRequest('POST', '/api/auth/register', {
       full_name: 'Owner Student',
       email: user1Email,
-      password: 'password123',
+      password: 'Password@123',
     });
 
     await makeRequest('POST', '/api/auth/register', {
       full_name: 'Other Student',
       email: user2Email,
-      password: 'password123',
+      password: 'Password@123',
     });
 
     const login1 = await makeRequest('POST', '/api/auth/login', {
       email: user1Email,
-      password: 'password123',
+      password: 'Password@123',
     });
     const token1 = login1.body.token;
 
     const login2 = await makeRequest('POST', '/api/auth/login', {
       email: user2Email,
-      password: 'password123',
+      password: 'Password@123',
     });
     const token2 = login2.body.token;
 

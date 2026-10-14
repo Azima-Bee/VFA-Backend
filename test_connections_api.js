@@ -62,17 +62,17 @@ async function runConnectionsTests() {
     const userCEmail = `conn_c_${timestamp}@college.edu`;
 
     // 1. Setup Auth: Register User A, User B, User C
-    const regA = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student A', email: userAEmail, password: 'password123' });
-    const regB = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student B', email: userBEmail, password: 'password123' });
-    const regC = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student C', email: userCEmail, password: 'password123' });
+    const regA = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student A', email: userAEmail, password: 'Password@123' });
+    const regB = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student B', email: userBEmail, password: 'Password@123' });
+    const regC = await makeRequest('POST', '/api/auth/register', { full_name: 'Conn Student C', email: userCEmail, password: 'Password@123' });
 
     const userAId = regA.body.user ? regA.body.user.id : null;
     const userBId = regB.body.user ? regB.body.user.id : null;
     const userCId = regC.body.user ? regC.body.user.id : null;
 
-    const loginA = await makeRequest('POST', '/api/auth/login', { email: userAEmail, password: 'password123' });
-    const loginB = await makeRequest('POST', '/api/auth/login', { email: userBEmail, password: 'password123' });
-    const loginC = await makeRequest('POST', '/api/auth/login', { email: userCEmail, password: 'password123' });
+    const loginA = await makeRequest('POST', '/api/auth/login', { email: userAEmail, password: 'Password@123' });
+    const loginB = await makeRequest('POST', '/api/auth/login', { email: userBEmail, password: 'Password@123' });
+    const loginC = await makeRequest('POST', '/api/auth/login', { email: userCEmail, password: 'Password@123' });
 
     const tokenA = loginA.body.token;
     const tokenB = loginB.body.token;
