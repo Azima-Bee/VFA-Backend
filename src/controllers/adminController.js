@@ -68,8 +68,9 @@ const getAdminStats = async (req, res) => {
  */
 const getAdminUsers = async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      `SELECT u.id, u.full_name, u.email, u.phone, u.role, u.account_status, u.created_at,
+    const { search, status } = req.query;
+    let query = `
+      SELECT u.id, u.full_name, u.email, u.phone, u.role, u.account_status, u.created_at,
               sp.college_name, sp.course, sp.year_of_study, sp.city, sp.gender,
               (
                 SELECT status FROM verifications 
@@ -78,8 +79,28 @@ const getAdminUsers = async (req, res) => {
               ) AS verification_status
        FROM users u
        LEFT JOIN student_profiles sp ON u.id = sp.user_id
-       ORDER BY u.created_at DESC`
-    );
+    `;
+    const whereClauses = [];
+    const params = [];
+
+    if (search && search.trim()) {
+      whereClauses.push('(u.full_name LIKE ? OR u.email LIKE ? OR sp.college_name LIKE ? OR sp.course LIKE ? OR sp.city LIKE ?)');
+      const s = `%${search.trim()}%`;
+      params.push(s, s, s, s, s);
+    }
+
+    if (status && ['active', 'suspended'].includes(status.toLowerCase())) {
+      whereClauses.push('u.account_status = ?');
+      params.push(status.toLowerCase());
+    }
+
+    if (whereClauses.length > 0) {
+      query += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    query += ' ORDER BY u.id DESC';
+
+    const [rows] = await pool.query(query, params);
 
     const users = rows.map((r) => ({
       id: String(r.id),
@@ -356,16 +377,37 @@ const deleteAdminListing = async (req, res) => {
  */
 const getAdminVerifications = async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      `SELECT v.id, v.user_id, v.document_type, v.document_url, v.status, v.verified_at,
+    const { status, search } = req.query;
+    let query = `
+      SELECT v.id, v.user_id, v.document_type, v.document_url, v.status, v.verified_at,
               v.student_id_number, v.university_email, v.created_at,
               u.full_name AS student_name, u.email AS user_email, u.phone,
               sp.college_name AS college, sp.course, sp.year_of_study
        FROM verifications v
        JOIN users u ON v.user_id = u.id
        LEFT JOIN student_profiles sp ON u.id = sp.user_id
-       ORDER BY v.created_at DESC`
-    );
+    `;
+    const whereClauses = [];
+    const params = [];
+
+    if (search && search.trim()) {
+      whereClauses.push('(u.full_name LIKE ? OR u.email LIKE ? OR sp.college_name LIKE ? OR v.student_id_number LIKE ?)');
+      const s = `%${search.trim()}%`;
+      params.push(s, s, s, s);
+    }
+
+    if (status && ['pending', 'verified', 'rejected'].includes(status.toLowerCase())) {
+      whereClauses.push('v.status = ?');
+      params.push(status.toLowerCase());
+    }
+
+    if (whereClauses.length > 0) {
+      query += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    query += ' ORDER BY v.id DESC';
+
+    const [rows] = await pool.query(query, params);
 
     const verifications = rows.map((v) => ({
       id: String(v.id),

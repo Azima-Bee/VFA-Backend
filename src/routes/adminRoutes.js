@@ -11,6 +11,7 @@ const {
   getAdminVerifications,
   getAdminAuditLogs
 } = require('../controllers/adminController');
+const { updateVerificationStatus } = require('../controllers/verificationController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
@@ -23,6 +24,7 @@ router.get('/stats', getAdminStats);
 router.get('/users', getAdminUsers);
 router.patch('/users/:id/status', updateUserStatus);
 router.get('/verifications', getAdminVerifications);
+router.patch('/verifications/:id/status', updateVerificationStatus);
 router.get('/listings', getAdminListings);
 router.patch('/listings/:id/status', updateListingStatus);
 router.delete('/listings/:id', deleteAdminListing);
